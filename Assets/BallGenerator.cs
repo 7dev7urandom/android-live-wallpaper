@@ -26,7 +26,8 @@ public class BallGenerator : MonoBehaviour
         timeBetweenBalls = timeToDropBalls / numberOfBalls;
         Input.gyro.enabled = true;
 
-        string path = Application.persistentDataPath + "/backImage.jpg";
+        //string path = Application.persistentDataPath + "/backImage.jpg";
+        string path = PlayerPrefs.GetString("backImageLoc");
         Debug.Log(path);
         if(File.Exists(path))
         {
@@ -58,6 +59,18 @@ public class BallGenerator : MonoBehaviour
 
         platform.rotation = Quaternion.Lerp(platform.rotation, Quaternion.Euler(Mathf.Clamp(Input.gyro.gravity.y * 90, -35f, 35f), 0f, Mathf.Clamp(Input.gyro.gravity.x * -90, -35f, 35f)), 0.5f);
         //rb.AddForce((Input.acceleration - Input.gyro.gravity) * accelerationConstant);
+        if (Input.GetMouseButtonDown(0))
+        {
+            //Touch touch = Input.touches[0];
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask("PhysBall")))
+            {
+                BallManager bManager = hit.collider.gameObject.GetComponent<BallManager>();
+                bManager.Explode();
+            }
+        }
+
     }
     public void GenerateBall()
     {

@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -36,6 +38,19 @@ public class Settings extends Activity {
 
         findViewById(R.id.imageButton).setOnClickListener(view -> {
             getImage();
+        });
+        ((CheckBox) findViewById(R.id.useEmojis)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Display a toast with the CheckBox state
+                SharedPreferences settings = getSharedPreferences("com.micahhenney.wallpaper.v2.playerprefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("useEmojis", isChecked);
+                editor.commit();
+            }
+        });
+        findViewById(R.id.restartButton).setOnClickListener(view -> {
+            restartWallpaper();
         });
     }
 
@@ -71,7 +86,7 @@ public class Settings extends Activity {
                 cursor.close();
 
                 // Save the image data to the persistent data path
-                SharedPreferences settings = getSharedPreferences("com.android.wallpaper.v2.playerprefs", Context.MODE_PRIVATE);
+                SharedPreferences settings = getSharedPreferences("com.micahhenney.wallpaper.v2.playerprefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("backImageLoc", filePath);
                 editor.commit();
@@ -95,7 +110,7 @@ public class Settings extends Activity {
             }
 
             // Restart the wallpaper service
-            restartWallpaper();
+            // restartWallpaper();
         }
     }
     private void restartWallpaper() {
